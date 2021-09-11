@@ -60,12 +60,17 @@ from audiophiler.ldap import ldap_is_eboard, ldap_is_rtp
 # Disable SSL certificate verification warning
 requests.packages.urllib3.disable_warnings()
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 @auth.oidc_auth('default')
 @audiophiler_auth
 def home(auth_dict=None):
+    page_str = request.args.get("page")
+    try:
+        page = int(page_str) if page_str else 1
+    except ValueError:
+        page = 1
     # Retrieve list of files for templating
-    db_files = File.query.all()
+    db_files = File.query.order_by(File.name).paginate(page, 20, error_out=False)
     harolds = get_harold_list(auth_dict["uid"])
     tour_harolds = get_harold_list("root")
     is_rtp = ldap_is_rtp(auth_dict["uid"])

@@ -38,7 +38,7 @@
             {% endif %}
         {% endif %}
 
-        {% for file in db_files %}
+        {% for file in db_files.items %}
             {% if loop.index0 is divisibleby 2 %}
                 <div class="row">
             {% endif %}
@@ -81,5 +81,25 @@
                 </div>
             {% endif %}
         {% endfor %}
-    </div>
+        <div class="text-center">
+            <div class="btn-group" role="group">
+                {% if db_files.has_prev %}
+                <a href="/?page={{ db_files.prev_num }}" class="btn btn-outline-primary">&#171;</a>
+                {% endif %}
+
+                {% for page in db_files.iter_pages() %}
+                    {% if page %}
+                    <a href="/?page={{ page }}" class="btn {% if page == db_files.page %} btn-primary {% else %} btn-outline-primary {% endif %}">{{ page }}</a>
+                    {% endif %}
+                    {% if not page %}
+                    <a class="btn btn-outline-primary">...</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if db_files.has_next %}
+                <a type= "button" href= "/?page={{ db_files.next_num }}" class="btn btn-outline-primary">&raquo;</a>
+                {% endif %}
+            </div>
+            </div>
+        </div>
 {% endblock %}
